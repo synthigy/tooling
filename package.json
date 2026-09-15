@@ -1,6 +1,6 @@
 {
   "name": "@synthigy/tooling",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Synthigy web components (data modeling, data console, log cockpit) and portal binaries",
   "author": "Robert Ger\u0161ak",
   "homepage": "https://github.com/synthigy/synthigy",
