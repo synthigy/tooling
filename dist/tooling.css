@@ -1,0 +1,7 @@
+/* Optional. The web components are fully self-contained — every color
+   token carries a fallback (`var(--sy-text-primary, #1f2937)` etc.) and
+   <synthigy-data-modeling> ships its own theme block on its shadow root
+   (see synthigy.modeling.theme / erd.css). Load this file only for the
+   Inter typeface the host CSS specifies; without it the components fall
+   back to the platform sans-serif. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');

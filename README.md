@@ -4,8 +4,9 @@ Synthigy's browser tooling and portal binaries.
 
 - `dist/modeling.js` registers `<synthigy-data-modeling>`, `<synthigy-data-console>`
   and `<synthigy-log-cockpit>`.
-- `dist/tooling.css` is optional — the Inter font and `--sy-*` theme tokens the
-  components fall back from.
+- `dist/tooling.css` is optional — the Inter font the components style
+  themselves with. Every color token carries a fallback, so the elements
+  render correctly without it.
 - GitHub Releases carry `synthigy-portal-{os}-{arch}` static binaries.
 
 ## Web components from a CDN
@@ -28,11 +29,11 @@ OIDC login against `endpoint`.
 ## Portal
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/synthigy/synthigy/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh
 ```
 
 ```powershell
-irm https://raw.githubusercontent.com/synthigy/synthigy/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 ```
 
 Binaries and `sha256sums-portal.txt` are attached to each release here.
