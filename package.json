@@ -1,6 +1,6 @@
 {
   "name": "@synthigy/tooling",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "description": "Synthigy web components (data modeling, data console, log cockpit) and portal binaries",
   "author": "Robert Ger\u0161ak",
   "homepage": "https://github.com/synthigy/synthigy",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "sideEffects": [
-    "./dist/modeling.js"
+    "./dist/tooling.js"
   ],
   "keywords": [
     "synthigy",

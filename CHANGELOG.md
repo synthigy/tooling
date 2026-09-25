@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.6
+
+- **Breaking: the bundle is now `dist/tooling.js`** (was `dist/modeling.js`).
+  Update the `<script>` URL; it registers the same three elements.
+- Web components: browser login reworked — authorization code + PKCE through
+  the engine's own login, with no refresh tokens; `oidc-client-ts` is no
+  longer bundled.
+- Web components: the natural-key marker in the modeler uses the new
+  `--sy-key` token (blue) in both themes.
+- Portal binaries: unchanged (latest is v0.1.5).
+
 ## 0.1.1
 
 - Portal: operator console can stop and start the engine from the Health

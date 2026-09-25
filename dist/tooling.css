@@ -1,7 +1,13 @@
-/* Optional. The web components are fully self-contained — every color
-   token carries a fallback (`var(--sy-text-primary, #1f2937)` etc.) and
-   <synthigy-data-modeling> ships its own theme block on its shadow root
-   (see synthigy.modeling.theme / erd.css). Load this file only for the
-   Inter typeface the host CSS specifies; without it the components fall
-   back to the platform sans-serif. */
+/* Optional. The web components are fully self-contained — each one adopts
+   the full --sy-* / --modeling-* palette into its own shadow root, in both
+   themes (synthigy.ui.tokens / tokens.css), and stamps the stored theme onto
+   its own host element (synthigy.ui.theme). Load this file only for the Inter
+   typeface the host CSS specifies; without it the components fall back to the
+   platform sans-serif.
+
+   The palette used to live in erd.css alone, i.e. inside
+   <synthigy-data-modeling> only. Inline var() fallbacks carried most of the
+   chrome elsewhere, but the CodeMirror HighlightStyle writes
+   var(--sy-syntax-*) with no fallback, so a console mounted on its own
+   rendered its XSQL buffer in one flat colour. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
