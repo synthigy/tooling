@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.7
+
+- Portal (`synthigy` CLI + daemon) binaries for this release — upgrade before
+  running engine v0.2.8: it runs the new bundles (`sqlite`, `postgres`,
+  `postgres-clickhouse`) and upgrades an older instance's `.env` in place on
+  the next `synthigy up`.
+- Portal console: the Observability panel is now **Dataline** (audit history,
+  logs and traffic), and turns red when the engine reports it degraded.
+- Web components: the data console reworked — editor, help, execution,
+  schema-aware variables.
+- Web components: shared design tokens, notifications and sign-in across the
+  modeler, data console and log cockpit.
+
 ## 0.1.6
 
 - **Breaking: the bundle is now `dist/tooling.js`** (was `dist/modeling.js`).
