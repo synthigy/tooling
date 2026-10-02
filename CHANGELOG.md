@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.9
+
+- Portal: `synthigy schema check` tells you whether your local `xsql/schema.json`
+  still matches the deployed model, and every command warns on stderr when it
+  doesn't — run `synthigy schema pull` to refresh it.
+- Portal: the setup page links the console at the instance's
+  `SYNTHIGY_IAM_ROOT_URL` instead of always `localhost:<port>`.
+- Web components: rebuilt against engine v0.2.10.
+
 ## 0.1.8
 
 - Portal: an instance upgraded from an older `.env` no longer tries to start
