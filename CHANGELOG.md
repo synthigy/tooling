@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.10
+
+- Portal: an app jar — your code with the engine embedded — runs under
+  `synthigy up` like a release. Point `SYNTHIGY_JAR` at it and list your
+  namespaces and modules in `.env` (`SYNTHIGY_REQUIRE`, `SYNTHIGY_MODULES`);
+  the console then starts, stops and restarts them and creates the first
+  superuser. Needs engine `0.2.13-SNAPSHOT` or newer.
+- Portal: the Engine panel shows the version the running engine reports, and
+  lists your app's modules plus any module that failed to start.
+- Web components: unchanged since 0.1.9.
+
 ## 0.1.9
 
 - Portal: `synthigy schema check` tells you whether your local `xsql/schema.json`
