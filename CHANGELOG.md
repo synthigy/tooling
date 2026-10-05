@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.12
+
+- Portal: SQLite files have one fixed place. `synthigy.db`, `audit.db` and
+  `logs.db` live in `<home>/db/`; `SQLITE_PATH`, `SQLITE_AUDIT_PATH` and
+  `SQLITE_LOGS_PATH` are gone. The setup page and the Database and Dataline
+  panels show the paths instead of asking for them, and `up` no longer writes
+  them into `.env`.
+- Portal: `synthigy status` shows what the running engine runs — the release
+  version and bundle, or the local jar.
+- Web components: unchanged since 0.1.9.
+
 ## 0.1.11
 
 - Portal: an engine killed by the operating system — the kernel's
