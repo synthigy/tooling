@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.1.11
+
+- Portal: an engine killed by the operating system — the kernel's
+  out-of-memory killer, a JVM crash — is started again by the portal. Before,
+  the portal took the kill for a deliberate stop and exited with it, leaving
+  the instance down. An engine that fails while it boots still stays down,
+  with the reason shown in the portal.
+- Portal: its own log lines carry a UTC timestamp and say how the engine
+  exited; a kill by the out-of-memory killer names itself.
+- Portal: `synthigy service install` takes over an instance already started
+  with `synthigy up` (one engine restart) instead of leaving the service
+  inactive, and the unit leaves an out-of-memory kill to the portal
+  (`OOMPolicy=continue`).
+- Portal: `synthigy down` stops the portal first, which stops its engine.
+- Portal: the Engine log shows times in your browser's timezone instead of the
+  server's, which on a cloud host is UTC.
+- Portal: stopping the engine after a restart no longer reports a failed start.
+- Web components: unchanged since 0.1.9.
+
 ## 0.1.10
 
 - Portal: an app jar — your code with the engine embedded — runs under
