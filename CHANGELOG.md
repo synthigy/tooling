@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.13
+
+Web components only; the portal binaries stay at 0.1.12.
+
+- Modeler, deploy drawer: a change that only deletes entities or relations can
+  be deployed; before, the drawer said the model matched the deployed version.
+- Modeler, deploy drawer: Suppress works on an added entity or relation, and
+  reverting an added UNIQUE attribute keeps the deployed unique key.
+- Modeler, deploy drawer: entities shared with other models no longer show
+  false Audit, RBAC or History warnings; settings this model doesn't set are
+  shown as left to the other models.
+- Modeler, deploy drawer: reactivated attributes, renames and soft-deletes
+  each show once with their detail. RLS guard rows can be reverted.
+- Modeler, entity drawer: an always-present row for a new attribute, and a
+  toggle to show or hide inactive attributes (read-only).
+- Modeler: pulling an entity restores its position from this dataset's last
+  deploy; a relation can't be pulled before its entity.
+- Modeler: messages appear bottom-right.
+- Log cockpit: level filter on the Dataset and Auth lenses.
+- Data console and log cockpit: sign-out button.
+- Smaller dialog buttons.
+- Smaller bundle: about 140 KB less (cljs.pprint dropped, logo SVGs optimized).
+
 ## 0.1.12
 
 - Portal: SQLite files have one fixed place. `synthigy.db`, `audit.db` and
