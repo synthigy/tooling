@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.14
+
+Web components only; the portal binaries stay at 0.1.12.
+
+- Modeler, entity drawer: Tab and Enter add the attribute and keep the cursor
+  in the new-attribute row, so attributes can be typed one after another.
+- Modeler, entity drawer: the inactive-attributes toggle shows its state —
+  "Inactive attributes present" or "Showing inactive attributes", with a
+  count — and is hidden when there are none.
+- Modeler, entity drawer: attribute types are listed most used first; `transit`
+  is no longer offered for new attributes (existing ones still show it).
+- Modeler, data console, log cockpit: opening a tool shows "connecting to
+  <host> …" instead of a blank screen, and "can't reach <host>" with Retry when
+  the engine is down, instead of a Sign In that leads to a refused page.
+- New `login-hint` attribute on all three elements: shows a demo login under
+  Sign In.
+
 ## 0.1.13
 
 Web components only; the portal binaries stay at 0.1.12.
