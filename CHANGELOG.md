@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.1.15
+
+Portal binaries and web components ship together again. Made for engine 0.3.0,
+whose single system dataset, Synthigy, the modeler now knows about.
+
+- Portal: `synthigy portal` opens the portal; `synthigy console` still works
+  as an alias, and `synthigy status` labels the row `portal`.
+- Portal: with `SYNTHIGY_IAM_ROOT_URL` set, every page shows the instance under
+  the logo (a link to it) and in the browser tab title, so a portal reached
+  through an SSH tunnel — always `localhost:7888` — still says which server it
+  is.
+- Portal: after it restarts a crashed engine (an out-of-memory kill, for one),
+  the portal shows when it happened, why, and how many times since the portal
+  started. A failed restart names the original cause too.
+- Portal: `synthigy whoami` on a service profile signs in as the client and
+  prints the client id, granted scope and token lifetime. Engine 0.3.0's
+  UserInfo refuses service tokens, which never carry the `openid` scope.
+- Portal: `SYNTHIGY_SERVER_TRUST_PROXY` is a text field in Effective
+  configuration, not a switch. It takes the IPs or CIDRs of your proxies,
+  comma separated (`127.0.0.1/32,::1/128` for a proxy on the same host). Engine
+  0.3.0 no longer accepts `true`.
+- Portal: `synthigy iam add-client` requires `--id`, because the server does
+  not generate one.
+- Portal: the upgrade progress names the new Synthigy model step.
+- Modeler: the system datasets, Synthigy and OAuth, carry a "system" badge.
+  They are read only unless you are a superuser, because they change only
+  through engine upgrades, and only a superuser can delete them or their
+  versions. A superuser's deploy that changes system entities shows a warning,
+  and Deploy turns into "Deploy anyway".
+- Modeler, deploy drawer: the engine checks every change before you deploy.
+  Entity name conflicts, duplicate field names, changes to system entities,
+  broken RLS guards and taken version names show as banners that block Deploy.
+  The button says "Checking…" while it waits.
+- Modeler: a deployed version is read only throughout. The entity and relation
+  drawers dim their editing controls, the entity drawer hides its add and
+  delete buttons, the deploy drawer its revert buttons, and undo no longer
+  records changes to a deployed version.
+- Modeler: "New version x.y.z" next to every read-only note saves the model as
+  the next patch version in one click; the deployed version is left as it is.
+  In Versions, Save becomes New when the name belongs to a deployed version.
+- Modeler: while a deploy, recall or destroy runs on the engine, the deploy
+  drawer says which and by whom, and Deploy and the delete buttons are disabled
+  until it finishes.
+- Modeler: deleting the version you have open loads the last deployed version,
+  or the newest draft, instead of leaving an empty canvas.
+- Modeler, entity drawer, RLS: the path picker has a "Match all (AND)" switch.
+  With it off, each selected path becomes its own guard row (OR). New rows take
+  their Read/Write/Delete grants in the picker. Paths that already have a row
+  are greyed out, and paths are lettered.
+- Modeler, entity drawer, RLS: a warning appears when no guard row grants Read
+  (nobody can read the rows), Write or Delete. "+ Add Guard Row" moved above
+  the rows.
+- Removed the `login-hint` attribute added in 0.1.14. Engine 0.3.0 can name a
+  demo account on its own login page instead (engine console → System → Custom
+  pages), so the components carry no demo text.
+- Modeler notifications stay bottom-right while a drawer is open, drawn over
+  the drawer (they used to jump to its left).
+
 ## 0.1.14
 
 Web components only; the portal binaries stay at 0.1.12.
