@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.16
+
+Web components only; the portal binaries stay at 0.1.15. Made for engine 0.3.1:
+on engine 0.3.0 the modeler shows "Loading system datasets — INTERNAL_ERROR"
+when it opens, because of an engine bug that 0.3.1 fixes.
+
+- A host `tokenResolver` is now called before every request, and it may return
+  a Promise. Before, the components called it once and kept that token, so a
+  host whose tokens expire (one-hour access tokens, for example) started failing
+  mid-session. A resolver that returns a fixed token behaves as before.
+- Modeler on Safari and other WebKit browsers: attribute type icons stay inside
+  their entity boxes. They used to pile up in the top-left corner of the canvas.
+
 ## 0.1.15
 
 Portal binaries and web components ship together again. Made for engine 0.3.0,
