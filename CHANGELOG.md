@@ -1,5 +1,91 @@
 # Changelog
 
+## 0.2.0
+
+Portal binaries, web components and the desktop app ship together. **Needs
+engine 0.4.0 or newer:** on 0.3.1 Sign Out fails and the session stays
+signed in.
+
+**Breaking.** The three elements are now one: `<synthigy-tools>`, with Model,
+Data and Logs as tools inside it. `<synthigy-data-modeling>`,
+`<synthigy-data-console>` and `<synthigy-log-cockpit>` are no longer
+registered; a page that still uses them gets an unknown element.
+
+Migrating:
+
+- Replace the tag with `<synthigy-tools>`. `endpoint`, `open`, `onClose`
+  and the `close` event work as before; `tokenResolver` does not (see
+  Signing in).
+- To open on the console or the log viewer, set `tool="data"` or
+  `tool="logs"`, or call `el.showTool("data")`. The old way of writing
+  `synthigy-modeling-console-open` / `synthigy-modeling-cockpit-open` to
+  `sessionStorage` before opening the modeler does nothing now.
+- `xsql` moves from the modeler to `<synthigy-tools>`.
+- The `entities` and `schema` properties of the old console are gone; Data
+  reads the deployed model itself.
+
+New: the desktop app. The same tools as a native app for macOS, Windows and
+Linux, built from `desktop/` by GitHub Actions; the installers are attached to
+this release, unsigned for now (see the README). Its MCP server
+(`synthigy-desktop --mcp`) lets an agent such as Claude Code edit the model,
+write, check and run XSQL (writes wait for your OK in the window), and read the
+logs.
+
+Signing in (**breaking**):
+
+- One way for every web host. The element signs in through a popup and
+  renews through a hidden frame, both answered by the static
+  `dist/callback.html`. Serve it at `/synthigy-callback.html` on your origin
+  and register that URL on the Synthigy Tools app. See Signing in in the README.
+- The full-page redirect login is gone, and so are
+  `window.SYNTHIGY_REDIRECT_URI` and `window.SYNTHIGY_POST_LOGOUT_REDIRECT_URI`.
+  Loading `tooling.js` on the redirect page no longer does anything special.
+- `tokenResolver` is honored only inside the Synthigy desktop app. Web hosts that
+  set it get one console warning and the built-in sign-in.
+- A failed renewal no longer signs the user out. The tools stay mounted, with a
+  "Session expires soon" notice and then a Continue screen.
+- Sign Out ends the engine session in the background and needs no logout
+  redirect. It needs engine 0.4.0 or newer. When the engine does not confirm
+  it, a notice says so and offers Try again.
+- Signing out, or signing in as someone else, clears what the previous user saw:
+  Data results, Logs rows and the Model's undo history. A reload alone no longer
+  clears undo.
+
+Fonts:
+
+- The element no longer adds a Google Fonts link to the host page. Include
+  `tooling.css` for Inter and JetBrains Mono; without it the system fonts are
+  used.
+
+What changed for users:
+
+- One header for all three tools: switch with the tabs or ⌥1 / ⌥2 / ⌥3, theme
+  with ⌘B, `?` lists the shortcuts of the tool you are in. One status line at
+  the bottom shows counts, state and key hints.
+- Model: dataset and version live in the header (O opens a dataset, V the
+  versions). Import, Export, Save (⌘S) and Deploy are header commands.
+  Entity, relation and deploy drawers dock as an inspector on the right. Bare
+  letters replace the old ⌘ shortcuts: E add entity, I import, D deploy,
+  A dataset access. ⌘D and ⌘H are no longer taken from the browser.
+- Data: each operation in the buffer has its own run marker in the gutter and
+  shows its result inline; ⌘↵ runs the operation under the cursor. "Run all"
+  is gone. Parameters: an optional `?x?` can't have a default, and a
+  string default must be double-quoted; both are flagged as you type.
+- Logs: one filter bar (active filters as chips, pickers, search). Search
+  waits until you stop typing; a request id searches all time. Clicking a cell
+  adds it as a filter, clicking it again removes it. The timeline shows
+  errors on top of each bar, and Live follows the newest rows. IP addresses
+  show in the Dataset and Auth lenses.
+
+Portal:
+
+- **License: Business Source License 1.1** (was MIT), the same terms as the
+  engine. See LICENSE.
+- `POSTGRES_JIT` is known to `doctor` and editable in Effective configuration
+  on PostgreSQL installs (engine 0.4.0 turns JIT off by default).
+- Updated to the current Tyrell components: tags, selects and modals render
+  the same, without the old workarounds.
+
 ## 0.1.16
 
 Web components only; the portal binaries stay at 0.1.15. Made for engine 0.3.1:

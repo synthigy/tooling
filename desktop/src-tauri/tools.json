@@ -1,0 +1,396 @@
+[ {
+  "name" : "get_app_state",
+  "description" : "Which engine the Synthigy window shows, its active tool (model, data or logs), the modeler's dataset and version, whether it can be edited (read_only_reason says why not), the selection and the entity count.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : { }
+  }
+}, {
+  "name" : "switch_tool",
+  "description" : "Switch the Synthigy window to another tool: model (ERD modeler), data (XSQL data console) or logs (log cockpit). The other tools keep their state. Returns the active tool; refused for a tool the user has no access to.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "tool" ],
+    "properties" : {
+      "tool" : {
+        "type" : "string",
+        "enum" : [ "model", "data", "logs" ]
+      }
+    }
+  }
+}, {
+  "name" : "get_model",
+  "description" : "The working ERD model the human is looking at: entities (id, name, position, active attributes with type and constraint, rls/rbac flags), relations (id, from/to entity ids and names, cardinality, labels, per-direction RBAC) and clones. Edits are local to the modeler until the human saves the version; deploying is also the human's call.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : { }
+  }
+}, {
+  "name" : "get_entity",
+  "description" : "Full detail of one entity: every attribute including soft-deleted ones, enum values, classification and attribute access (denied roles); unique groups; RBAC; RLS with its guards (id, operations, paths, dangling paths); audit; and the relations that touch it.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "entity" ],
+    "properties" : {
+      "entity" : {
+        "type" : "string",
+        "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+      }
+    }
+  }
+}, {
+  "name" : "rls_paths",
+  "description" : "The paths from an entity to IAM (users, groups, roles) that RLS guards can use — a user/group/role attribute, a relation chain ending at an IAM entity, or a chain ending at such an attribute — cheapest first. Use `label` or `key` in add_rls_guard; labels can shift when relations change, keys don't.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "entity" ],
+    "properties" : {
+      "entity" : {
+        "type" : "string",
+        "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+      }
+    }
+  }
+}, {
+  "name" : "deploy_preview",
+  "description" : "What deploying the working model would change, exactly as the deploy drawer shows it: summary counts, entities (added/removed/modified, with attribute and setting changes), relations, and the engine's deploy check (problems that would block or lose data). Read-only: it doesn't open the drawer or lock the canvas. Use it to verify a batch of edits; undo individual changes with the revert_*/pull_* operations of model_edit.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : { }
+  }
+}, {
+  "name" : "set_role_access",
+  "description" : "Grant or revoke which roles may act on an entity or relation — the Access tab's matrix. These are rows on the engine's roles, NOT model edits: they are saved immediately, have no undo, and apply to deployed entities/relations only. Entity grants: create, read, update, delete, owners (all operations and bypasses RLS), browse (read and bypasses RLS for reads). Relation grants per direction (from = FROM→TO navigation, to = TO→FROM): read, write, delete. Only the grants you name change; get_entity shows the current role_access.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "changes" ],
+    "properties" : {
+      "changes" : {
+        "type" : "array",
+        "minItems" : 1,
+        "items" : {
+          "type" : "object",
+          "required" : [ "role", "grants" ],
+          "properties" : {
+            "role" : {
+              "type" : "string",
+              "description" : "Role name or id (list_roles)."
+            },
+            "entity" : {
+              "type" : "string",
+              "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+            },
+            "relation" : {
+              "type" : "string",
+              "description" : "Relation id."
+            },
+            "direction" : {
+              "type" : "string",
+              "enum" : [ "from", "to" ]
+            },
+            "grants" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "boolean"
+              },
+              "description" : "e.g. {\"read\": true, \"delete\": false}"
+            }
+          }
+        }
+      }
+    }
+  }
+}, {
+  "name" : "list_roles",
+  "description" : "The engine's roles (id, name), for set_attribute_access and set_role_access.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : { }
+  }
+}, {
+  "name" : "model_edit",
+  "description" : "Apply a batch of operations to the working model, atomically and as ONE undo step on the canvas. If any operation is invalid nothing is applied and the error names the operation. Structure: add_entity {name, x?, y?, ref?} (placed right of the others without x/y); rename_entity {entity, name}; move_entity {entity, x, y}; remove_entity {entity} (also removes its relations); add_attribute {entity, name, type?=string, constraint?=optional, values? (enum), ref?}; update_attribute {entity, attribute, name?, type?, constraint?}; remove_attribute {entity, attribute} (deployed attributes are soft-deleted, new ones removed); reactivate_attribute {entity, attribute}; add_enum_value / update_enum_value {…, value, name?, active?} / remove_enum_value {entity, attribute, value}; set_unique_groups {entity, groups}; create_relation {from, to, cardinality?=o2o, to_label?, from_label?, ref?}; update_relation {relation, cardinality?, to_label?, from_label?}; remove_relation {relation}. Access: set_rbac {entity, enabled}; set_relation_rbac {relation, direction, enabled}; set_attribute_access {entity, attribute, operation, denied_roles}; set_classification {entity, attribute, tags}; set_ownership {entity, setting, managed_by} (for entities also deployed by other models); set_rls {entity, enabled}; add_rls_guard {entity, paths, operations?=[read], match?=all} — guard rows are OR'd, paths in a row AND'd; remove_rls_guard {entity, guard}; set_rls_guard_operations {entity, guard, operations}; set_audit {entity, actions?, persist?}. Against the deployed version (what deploy_preview reports): revert_entity {entity} (a new entity is removed), pull_entity {entity} (bring back a deployed entity this model dropped, with its relations), revert_relation {relation}, pull_relation {relation}, revert_attribute {entity, attribute}, revert_rls_guard {entity, guard}, revert_setting {entity, setting}. Role grants (which roles may create/read/update/delete an entity) are not model edits: use set_role_access. Naming collisions and dangling RLS paths/unique groups are applied like in the UI and reported in `warnings` — deploy refuses them, so fix them. Refused when the version is deployed, the deploy drawer is open or the engine is busy.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "operations" ],
+    "properties" : {
+      "operations" : {
+        "type" : "array",
+        "minItems" : 1,
+        "items" : {
+          "type" : "object",
+          "required" : [ "op" ],
+          "properties" : {
+            "y" : {
+              "type" : "number"
+            },
+            "constraint" : {
+              "type" : "string",
+              "enum" : [ "optional", "mandatory", "unique", "unique+mandatory" ]
+            },
+            "tags" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              },
+              "description" : "Classification tags, e.g. pii, phi, secret, internal; [] clears."
+            },
+            "attribute" : {
+              "type" : "string",
+              "description" : "Attribute id, \"@ref\", or the attribute's name on that entity."
+            },
+            "ref" : {
+              "type" : "string",
+              "description" : "Name for the created entity/attribute/relation, usable as \"@ref\" later in the batch; its id comes back in `ids`."
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "value" : {
+              "type" : "string",
+              "description" : "An enum value's name or id."
+            },
+            "operation" : {
+              "type" : "string",
+              "enum" : [ "read", "write" ],
+              "description" : "For set_attribute_access."
+            },
+            "paths" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              },
+              "description" : "RLS paths by label (A, B…) or key from rls_paths."
+            },
+            "persist" : {
+              "type" : "boolean",
+              "description" : "Persist every change to the audit log."
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "string", "int", "float", "boolean", "timestamp", "json", "enum", "encrypted", "hashed", "uuid", "user", "group", "role" ]
+            },
+            "op" : {
+              "type" : "string",
+              "enum" : [ "add_entity", "rename_entity", "move_entity", "remove_entity", "add_attribute", "update_attribute", "remove_attribute", "reactivate_attribute", "add_enum_value", "update_enum_value", "remove_enum_value", "set_unique_groups", "create_relation", "update_relation", "remove_relation", "set_rbac", "set_relation_rbac", "set_attribute_access", "set_classification", "set_ownership", "set_rls", "add_rls_guard", "remove_rls_guard", "set_rls_guard_operations", "set_audit", "revert_entity", "pull_entity", "revert_relation", "pull_relation", "revert_attribute", "revert_rls_guard", "revert_setting" ]
+            },
+            "actions" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "enum" : [ "created", "modified" ]
+              },
+              "description" : "Audit columns to keep (created_by/modified_by); [] clears."
+            },
+            "setting" : {
+              "type" : "string",
+              "enum" : [ "rbac", "audit", "audit_persist", "unique_groups" ],
+              "description" : "set_ownership takes rbac/audit/audit_persist; revert_setting also unique_groups."
+            },
+            "from_label" : {
+              "type" : "string",
+              "description" : "Field name on the TO entity that points back to FROM (e.g. OrderItem.order)."
+            },
+            "to_label" : {
+              "type" : "string",
+              "description" : "Field name on the FROM entity that points to TO (e.g. Order.items)."
+            },
+            "denied_roles" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              },
+              "description" : "Role names or ids denied this operation on the attribute (applies when the entity has RBAC on); [] clears."
+            },
+            "from" : {
+              "type" : "string",
+              "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+            },
+            "active" : {
+              "type" : "boolean"
+            },
+            "values" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              },
+              "description" : "Enum values, for add_attribute with type enum."
+            },
+            "managed_by" : {
+              "type" : "string",
+              "enum" : [ "this_model", "other_models" ]
+            },
+            "operations" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "enum" : [ "read", "write", "delete" ]
+              }
+            },
+            "x" : {
+              "type" : "number"
+            },
+            "groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : "Unique groups: each a list of unique attributes that are unique together."
+            },
+            "cardinality" : {
+              "type" : "string",
+              "enum" : [ "o2o", "o2m", "m2o", "m2m", "tree" ]
+            },
+            "relation" : {
+              "type" : "string",
+              "description" : "Relation id or \"@ref\"."
+            },
+            "entity" : {
+              "type" : "string",
+              "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+            },
+            "enabled" : {
+              "type" : "boolean"
+            },
+            "guard" : {
+              "type" : "string",
+              "description" : "Guard id from get_entity."
+            },
+            "direction" : {
+              "type" : "string",
+              "enum" : [ "from", "to" ],
+              "description" : "Relation RBAC side: from = navigating FROM→TO (the to_label field), to = TO→FROM."
+            },
+            "match" : {
+              "type" : "string",
+              "enum" : [ "all", "any" ],
+              "description" : "add_rls_guard: all = one guard row requiring every path (AND, default); any = one row per path (OR)."
+            },
+            "to" : {
+              "type" : "string",
+              "description" : "Entity id, \"@ref\" from an earlier operation in the same batch, or the entity's unique name."
+            }
+          }
+        }
+      }
+    }
+  }
+}, {
+  "name" : "xsql_reference",
+  "description" : "The XSQL language reference: query shapes, relations, parameters, counts and aggregates, operation files (@search, @get, @sync, @stack, @delete, @purge, @slice, @batch, @sql-template…). Read it before writing XSQL.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : { }
+  }
+}, {
+  "name" : "xsql_check",
+  "description" : "Lint and parse XSQL against the engine's deployed model, as the Data console does while typing, without running anything. Returns the operations it found (name, verb, kind read/write/destroy/batch) and every diagnostic with line and column. `ok` is false when there are errors; xsql_run refuses those operations.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "xsql" ],
+    "properties" : {
+      "xsql" : {
+        "type" : "string",
+        "description" : "XSQL text: one query, or an operation file with @-headers."
+      }
+    }
+  }
+}, {
+  "name" : "xsql_run",
+  "description" : "Run XSQL on the engine as the signed-in human and return each operation's result. A bare query runs as a search; in an operation file, `op` picks one operation or @batch by name, and without it every operation runs, in order, as one batch. Reads run directly. Writes (@sync, @stack) and destroys (@delete, @purge, @slice) run only after the human confirms them in the Synthigy window, so the call waits for that answer. Lint errors refuse the run (see xsql_check). Long row lists are cut to `max_rows` and say how many there were.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "xsql" ],
+    "properties" : {
+      "xsql" : {
+        "type" : "string"
+      },
+      "op" : {
+        "type" : "string",
+        "description" : "Name of the operation or @batch to run."
+      },
+      "params" : {
+        "type" : "object",
+        "description" : "Parameter values by name, e.g. {\"since\": 1990, \"q\": \"%star%\"}; a write's data parameter takes the records, e.g. {\"records\": [{\"title\": \"…\"}]}."
+      },
+      "max_rows" : {
+        "type" : "integer",
+        "minimum" : 1,
+        "description" : "Rows returned per operation, default 100."
+      }
+    }
+  }
+}, {
+  "name" : "data_open",
+  "description" : "Show XSQL to the human in the Data tool, as a workspace: a text starting with @workspace \"name\" replaces the workspace of that name, any other text opens as a new one. Switches the window to Data. Running it is then up to the human.",
+  "inputSchema" : {
+    "type" : "object",
+    "required" : [ "xsql" ],
+    "properties" : {
+      "xsql" : {
+        "type" : "string"
+      }
+    }
+  }
+}, {
+  "name" : "data_workspaces",
+  "description" : "The human's Data workspaces: id, name, whether it is the active one, and its full XSQL text. A workspace is one .xsql file; save it to the project's xsql/ folder to generate code from it.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : {
+      "workspace" : {
+        "type" : "string",
+        "description" : "A workspace id or name, to read just that one."
+      }
+    }
+  }
+}, {
+  "name" : "logs_query",
+  "description" : "Read the engine's logs as the Logs tool does. Lenses: system (lifecycle, deploys, every error), dataset (one row per /data operation: who, what, how long), auth (sign-in, tokens, sessions, connectors). Newest first. Rows carry inst, level, id, ns, msg, request_id and structured data.",
+  "inputSchema" : {
+    "type" : "object",
+    "properties" : {
+      "lens" : {
+        "type" : "string",
+        "enum" : [ "system", "dataset", "auth" ],
+        "description" : "Default system."
+      },
+      "since" : {
+        "type" : "string",
+        "description" : "ISO instant, or a duration back from now: 15m, 2h, 1d. Default 1h."
+      },
+      "until" : {
+        "type" : "string",
+        "description" : "ISO instant; default now."
+      },
+      "level" : {
+        "type" : "array",
+        "items" : {
+          "type" : "string",
+          "enum" : [ "trace", "debug", "info", "warn", "error", "fatal" ]
+        }
+      },
+      "request_id" : {
+        "type" : "string",
+        "description" : "All rows of one request, at any time."
+      },
+      "text" : {
+        "type" : "string",
+        "description" : "Keep rows that contain this anywhere (message, ids, data), case-insensitive; scans the newest 2000 rows of the window."
+      },
+      "where" : {
+        "type" : "object",
+        "description" : "Extra filters in the log-query wire shape, e.g. {\"data\": {\"entity\": \"movie\"}} or {\"user_xid\": \"…\"}."
+      },
+      "limit" : {
+        "type" : "integer",
+        "minimum" : 1,
+        "maximum" : 2000,
+        "description" : "Default 100."
+      }
+    }
+  }
+} ]

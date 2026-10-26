@@ -2,12 +2,12 @@
    the full --sy-* / --modeling-* palette into its own shadow root, in both
    themes (synthigy.ui.tokens / tokens.css), and stamps the stored theme onto
    its own host element (synthigy.ui.theme). Load this file only for the Inter
-   typeface the host CSS specifies; without it the components fall back to the
-   platform sans-serif.
+   and JetBrains Mono typefaces (from Google Fonts); without it the components
+   use the platform fonts and load nothing from a third party.
 
    The palette used to live in erd.css alone, i.e. inside
    <synthigy-data-modeling> only. Inline var() fallbacks carried most of the
    chrome elsewhere, but the CodeMirror HighlightStyle writes
    var(--sy-syntax-*) with no fallback, so a console mounted on its own
    rendered its XSQL buffer in one flat colour. */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
