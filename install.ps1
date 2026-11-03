@@ -54,6 +54,7 @@ $exe = Join-Path $dir "synthigy.exe"
 $tmp = "$exe.part"
 Invoke-WebRequest -Uri $url -OutFile $tmp
 $sums = (Invoke-WebRequest -Uri ($url.Substring(0, $url.LastIndexOf("/")) + "/sha256sums-portal.txt")).Content
+if ($sums -is [byte[]]) { $sums = [Text.Encoding]::UTF8.GetString($sums) }
 $want = ($sums -split "`n" | ForEach-Object { $f = $_.Trim() -split "\s+"; if ($f.Count -eq 2 -and $f[1] -eq $asset) { $f[0] } } | Select-Object -First 1)
 $got = (Get-FileHash -Algorithm SHA256 $tmp).Hash.ToLower()
 if (-not $want -or $got -ne $want.ToLower()) {
