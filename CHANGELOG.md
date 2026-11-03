@@ -1,5 +1,150 @@
 # Changelog
 
+## 0.2.1
+
+Needs engine 0.4.1 or newer: Synthigy Studio signs in with the engine's
+Synthigy Studio client, which discovery now names `studio_client_id`.
+
+**Breaking.** The desktop app is now Synthigy Studio: `Synthigy Studio.app`,
+binary `synthigy-studio` (was `Synthigy.app`, `synthigy-desktop`), app id
+`com.synthigy.studio`. Re-add the MCP server with the new path (see the
+README). Saved engines and sign-ins do not carry over: add your engines again
+and sign in once.
+
+**License.** The web components (`tooling.js`) are now under the Business
+Source License 1.1 with the engine's Additional Use Grant (`dist/LICENSE`).
+0.2.0 and earlier stay MIT.
+
+**Files**, a tool between Data and Logs (⌘3 / ⌥3), for engines
+running the files module:
+
+- A folder tree, with files in no folder (attached to records) pinned under it.
+- Upload by button or drop, with progress; a name that is taken asks to
+  replace (a new version) or keep both. Download, rename, move, delete,
+  several files at once.
+- Versions with download and restore, and a preview for images, PDFs and text.
+- Folder settings: Public, Cache, and who may read, write and delete, with
+  users and groups picked from a list.
+- Go to path (⌘P), and live updates while someone else changes files.
+
+Synthigy Studio's MCP server now lets an agent work in the window you are
+looking at, as the account you signed in with:
+
+- Model: read and edit the model, list datasets, open a version, start a
+  dataset, and save drafts or a new version. An agent never deploys, recalls
+  or deletes, never saves over a deployed version or a draft it didn't
+  create, and refuses to load anything over unsaved changes on your canvas.
+- Data: write, check and run XSQL, show it to you in Data, read your
+  workspaces. How agent writes are handled is set per engine with the bot
+  button in the header: ask every time, ask once per session, allow, or off.
+- Files: search files and folders by path, and show one to you in Files.
+- Engines: list the saved engines and switch to one that is already signed
+  in. Signing in and out stays with you.
+- XSQL help is built in: the server hands agents a short XSQL reference when
+  they connect, lint errors suggest the fix, and an `xsql` prompt walks from a
+  task to a checked operation file in `xsql/` (`/mcp__synthigy__xsql` in Claude
+  Code).
+- `project_guide` explains how a project fits together (the `synthigy` CLI for
+  the engine, schema snapshot and code generation, Synthigy Studio for the
+  model and data), and a `setup_project` prompt has the agent write an
+  `AGENTS.md` for the project.
+
+The bot button glows green while an agent is working, and every agent load,
+save and switch shows a notification. On desktop, your name in the header
+signs that engine out and returns to the engine list.
+
+What changed for users:
+
+- Model: both switchers show a fixed-height list with a New dataset section,
+  rename and delete the open dataset, and mark the live version. A new
+  dataset gets its name and first version (0.1.0) in a dialog; names that
+  differ only by case, spaces or punctuation are refused. Drafts can be
+  deleted; deleting the live version is a Recall, which rolls the engine back
+  to the previous deployed version. Deployed versions can't be renamed.
+- Notifications sit at the bottom left, clear of the drawers.
+- Button labels can no longer be selected as text.
+
+Fixes:
+
+- A new dataset could not be saved or deployed when the dataset open before it
+  had a deployed version of the same name, and a save could then have written
+  over that other dataset's version.
+- A new dataset could take the name of the dataset that was open.
+- Desktop: an expired session is refreshed instead of failing, and popups no
+  longer fall back to a serif font.
+
+## 0.3.0
+
+Needs engine 0.4.1 or newer: Synthigy Studio signs in with the engine's
+Synthigy Studio client, which discovery now names `studio_client_id`.
+
+**Breaking.** The desktop app is now Synthigy Studio: `Synthigy Studio.app`,
+binary `synthigy-studio` (was `Synthigy.app`, `synthigy-desktop`), app id
+`com.synthigy.studio`. Re-add the MCP server with the new path (see the
+README). Saved engines and sign-ins do not carry over: add your engines again
+and sign in once.
+
+**License.** The web components (`tooling.js`) are now under the Business
+Source License 1.1 with the engine's Additional Use Grant (`dist/LICENSE`).
+0.2.0 and earlier stay MIT.
+
+**Files**, a tool between Data and Logs (⌘3 / ⌥3), for engines
+running the files module:
+
+- A folder tree, with files in no folder (attached to records) pinned under it.
+- Upload by button or drop, with progress; a name that is taken asks to
+  replace (a new version) or keep both. Download, rename, move, delete,
+  several files at once.
+- Versions with download and restore, and a preview for images, PDFs and text.
+- Folder settings: Public, Cache, and who may read, write and delete, with
+  users and groups picked from a list.
+- Go to path (⌘P), and live updates while someone else changes files.
+
+Synthigy Studio's MCP server now lets an agent work in the window you are
+looking at, as the account you signed in with:
+
+- Model: read and edit the model, list datasets, open a version, start a
+  dataset, and save drafts or a new version. An agent never deploys, recalls
+  or deletes, never saves over a deployed version or a draft it didn't
+  create, and refuses to load anything over unsaved changes on your canvas.
+- Data: write, check and run XSQL, show it to you in Data, read your
+  workspaces. How agent writes are handled is set per engine with the bot
+  button in the header: ask every time, ask once per session, allow, or off.
+- Engines: list the saved engines and switch to one that is already signed
+  in. Signing in and out stays with you.
+- XSQL help is built in: the server hands agents a short XSQL reference when
+  they connect, lint errors suggest the fix, and an `xsql` prompt walks from a
+  task to a checked operation file in `xsql/` (`/mcp__synthigy__xsql` in Claude
+  Code).
+- `project_guide` explains how a project fits together (the `synthigy` CLI for
+  the engine, schema snapshot and code generation, Synthigy Studio for the
+  model and data), and a `setup_project` prompt has the agent write an
+  `AGENTS.md` for the project.
+
+The bot button glows green while an agent is working, and every agent load,
+save and switch shows a notification. On desktop, your name in the header
+signs that engine out and returns to the engine list.
+
+What changed for users:
+
+- Model: both switchers show a fixed-height list with a New dataset section,
+  rename and delete the open dataset, and mark the live version. A new
+  dataset gets its name and first version (0.1.0) in a dialog; names that
+  differ only by case, spaces or punctuation are refused. Drafts can be
+  deleted; deleting the live version is a Recall, which rolls the engine back
+  to the previous deployed version. Deployed versions can't be renamed.
+- Notifications sit at the bottom left, clear of the drawers.
+- Button labels can no longer be selected as text.
+
+Fixes:
+
+- A new dataset could not be saved or deployed when the dataset open before it
+  had a deployed version of the same name, and a save could then have written
+  over that other dataset's version.
+- A new dataset could take the name of the dataset that was open.
+- Desktop: an expired session is refreshed instead of failing, and popups no
+  longer fall back to a serif font.
+
 ## 0.2.0
 
 Portal binaries, web components and the desktop app ship together. **Needs

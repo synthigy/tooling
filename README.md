@@ -1,6 +1,6 @@
 # @synthigy/tooling
 
-Synthigy's browser tooling, desktop app and portal binaries.
+Synthigy's browser tooling, Synthigy Studio (the desktop app) and portal binaries.
 
 ## Install
 
@@ -17,8 +17,8 @@ irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 **Web components**, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.0/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.0/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
@@ -40,20 +40,18 @@ npm install @synthigy/tooling
 - GitHub Releases carry `synthigy-portal-{os}-{arch}` static binaries
   (`install.sh`/`install.ps1` above fetch these automatically) and the
   desktop app installers.
-- `desktop/` is the desktop app's source as released: the compiled tools and
-  the Tauri host. GitHub Actions builds the installers from it on every tag.
 
 ## Web components
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.0/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.0/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
 
 The same files are served straight from this repository's tags:
-`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.0/dist/tooling.js`.
+`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.1/dist/tooling.js`.
 
 Attributes:
 
@@ -109,18 +107,31 @@ The installers above put a `synthigy` binary on your PATH (`~/.synthigy/bin`,
 override with `SYNTHIGY_INSTALL_DIR`). Pin a version:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.2.0
+curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.2.1
 ```
 
 Binaries and `sha256sums-portal.txt` are attached to each release here.
 
-## Desktop app
+## Synthigy Studio (desktop app)
 
 The same tools as a native app for macOS, Windows and Linux, with an MCP
-server an agent can drive the modeler through (`synthigy-desktop --mcp`).
+server an agent such as Claude Code works through (`synthigy-studio --mcp`):
+model, datasets and versions (drafts only, never deploy), XSQL, logs, and
+switching between engines you are signed in to. Agent data writes follow the
+per-engine setting under the bot button in the header.
+
+Connect Claude Code to the installed app (the app must be open, with an engine
+signed in):
+
+```
+# macOS
+claude mcp add synthigy -s user -- "/Applications/Synthigy Studio.app/Contents/MacOS/synthigy-studio" --mcp
+# Windows (PowerShell; MSI installs go to C:\Program Files\Synthigy Studio instead)
+claude mcp add synthigy -s user -- "$env:LOCALAPPDATA\Synthigy Studio\synthigy-studio.exe" --mcp
+```
 Each release carries the installers: `.dmg` (macOS, Intel and Apple Silicon),
 `.msi` and `-setup.exe` (Windows), `.deb`, `.rpm` and `.AppImage` (Linux),
-with `sha256sums-desktop.txt`.
+with `sha256sums-studio.txt`.
 
 The installers are not signed yet. On macOS, open the app the first time with
 right-click → Open; on Windows, choose "More info" → "Run anyway" in
