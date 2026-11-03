@@ -10,7 +10,7 @@
 #   Commercial licensing: r.gersak@gmail.com  See COMMERCIAL.md.
 
 # Synthigy portal installer for Windows (PowerShell 5.1+ / pwsh):
-#   irm https://raw.githubusercontent.com/synthigy/synthigy/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 # Pin a version:
 #   $env:SYNTHIGY_VERSION = "v0.1.0"; irm .../install.ps1 | iex
 # Installs `synthigy` to ~\.synthigy\bin (override: $env:SYNTHIGY_INSTALL_DIR)

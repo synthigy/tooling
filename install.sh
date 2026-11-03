@@ -11,7 +11,7 @@
 #   Commercial licensing: r.gersak@gmail.com  See COMMERCIAL.md.
 
 # Synthigy portal installer:
-#   curl -fsSL https://raw.githubusercontent.com/synthigy/synthigy/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh
 # Pin a version:  curl ... | sh -s -- v0.1.0     (default: newest with binaries)
 # Installs the `synthigy` command to ~/.synthigy/bin (override:
 # SYNTHIGY_INSTALL_DIR) and adds it to PATH in your shell profile — both
@@ -33,7 +33,7 @@ VERSION="${1:-latest}"
 case "$(uname -s)" in
   Linux)  os=linux ;;
   Darwin) os=darwin ;;
-  *) echo "unsupported OS: $(uname -s) (Windows: irm https://raw.githubusercontent.com/synthigy/synthigy/main/install.ps1 | iex)"; exit 1 ;;
+  *) echo "unsupported OS: $(uname -s) (Windows: irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex)"; exit 1 ;;
 esac
 case "$(uname -m)" in
   x86_64|amd64)  arch=amd64 ;;
