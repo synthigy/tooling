@@ -1,5 +1,107 @@
 # Changelog
 
+## 0.2.2
+
+Needs engine 0.4.2 or newer: the modeler writes stamp attributes (model format
+3), Data counts with operations, and Files reads its list through `/data`. The
+modeler refuses to deploy to an older engine ("This engine still runs audit
+fields"). Projects need the synthigy CLI 0.2.2 (`synthigy upgrade`).
+
+**Breaking for agents.** `model_edit` has `set_history` instead of `set_audit`,
+`get_entity` reports `history` instead of `audit`, and `remove_attribute` takes
+the attribute out of the version. After updating, reconnect the MCP server
+(`/mcp` in Claude Code): a running `--mcp` process keeps the old tool list. The
+README now registers the server as `synthigy-studio`; an existing `synthigy`
+registration keeps working.
+
+**Projects** in Synthigy Studio. The start page has three tabs: Projects,
+Engines and Agents.
+
+- Open project… takes a folder with a `.synthigy/` (or a folder below one).
+  Studio asks the synthigy CLI for the project's engine, adds it when it is
+  missing, signs in and opens it, remote engines included.
+- New project… runs `synthigy env init` in a folder, starts the engine, opens
+  its setup page, and then the project.
+- A recent project whose local engine is stopped gets Start. The project button
+  in the header shows the folder and the engine, and offers Stop for an engine
+  started with `synthigy up`.
+- The project's `.xsql` files are the Data workspaces: typing saves the file,
+  changes on disk reload, and a clash with unsaved edits asks which to keep. New
+  creates a file; scratch workspaces stay, with Save to project.
+- Every model save also writes `<dataset>.dataset.json` into the project. A
+  model file whose version the engine lacks is offered with Load as draft.
+- The Agents tab shows how to register the MCP server in Claude Code, Claude
+  Desktop, Codex, ChatGPT, Gemini CLI and Cursor.
+- A strip says when the synthigy CLI is missing, too old or broken, with the
+  fix (Install, Upgrade or Reinstall).
+
+**Agents** work in the agent's own project. Every MCP call carries the folder
+the agent was started in, and Studio opens that folder's project and engine
+first; it refuses while there are unsaved changes. `project_open` opens a
+folder explicitly, and `get_app_state` names the project. In a project,
+`data_open` writes the `.xsql` file. After a deploy, the agent's next result
+says to run `synthigy schema pull` and regenerate. On macOS the window keeps
+running behind other windows, so agent calls no longer stall.
+
+**Stamps replace audit fields** (Model):
+
+- A timestamp or user attribute can be stamped On create or On modify. "Add
+  created/modified stamps" adds Created On, Created By, Modified On and Modified
+  By in one step.
+- Older models open with their audit fields as these four attributes, on the
+  same columns. The entity's Audit tab is now History.
+- Attribute rows show marks for stamp, classification and access. The settings
+  button opens Attribute settings with Stamp, Classification and Access.
+- Removing an attribute takes it out of the version. A removed deployed
+  attribute can be restored, with its column and data. Recalling the last
+  deployed version that holds an attribute drops its column and data.
+
+**Counts and aggregates are operations** (Data), one line each:
+`votes: count(ratings)`, `leads: count(actors.role = "lead")`,
+`rating: avg(ratings.value)`, with completion, lint and help; `order by` takes
+the alias. A `_count` / `_agg` block is now an error that names the
+replacement, and the context panel's Aggregates toggles are gone. A user, group
+or role reference filters and sorts only by its label: `display_name`, or
+`name` for a group or role.
+
+**Files:**
+
+- Big folders load 200 files at a time with infinite scroll. Name, Size and
+  Modified sort, and the filter searches the engine when not every file is
+  loaded.
+- A folder opens with one round of requests, and live updates reload only what
+  changed.
+- One file can be moved from its drawer. Copy link works for private files too,
+  and says whether the link opens without signing in.
+- The list shows the uploader's display name.
+
+**Logs:** the Files lens has its own view, with time, level, action, subject,
+folder, user and message, pickers for each, and drill-down.
+
+What changed for users:
+
+- With no dataset open, the canvas offers Open dataset and New dataset, and the
+  open dataset can be closed from the switcher (×).
+- A relation to a clone is a full relation, with a tab for each end.
+- An error inside a tool shows "Something went wrong" with Copy report, and the
+  tool recovers. Nothing is sent.
+- Agent notices have their own look.
+- `like` / `ilike` work on enum fields.
+
+Fixes:
+
+- + with no dataset open broke the interface.
+- After Open dataset, ↓, Enter, keys stopped working until a click.
+- A deploy made while the engine restarted stayed unseen until a reload; the
+  modeler now refetches when the window gets focus.
+- Dragging attributes to reorder them did nothing in Studio.
+- Notifications could cover the action bar in Model.
+- After a reload the modeler could reopen a stale version, and a save then
+  failed with `VERSION_NAME_TAKEN`; clicking New version twice did the same.
+- Right after a reload, the first Data, Logs and Files calls could fail with
+  "Not connected".
+- Entities an agent added in one batch landed in a staircase.
+
 ## 0.2.1
 
 Needs engine 0.4.1 or newer: Synthigy Studio signs in with the engine's
@@ -38,78 +140,6 @@ looking at, as the account you signed in with:
   workspaces. How agent writes are handled is set per engine with the bot
   button in the header: ask every time, ask once per session, allow, or off.
 - Files: search files and folders by path, and show one to you in Files.
-- Engines: list the saved engines and switch to one that is already signed
-  in. Signing in and out stays with you.
-- XSQL help is built in: the server hands agents a short XSQL reference when
-  they connect, lint errors suggest the fix, and an `xsql` prompt walks from a
-  task to a checked operation file in `xsql/` (`/mcp__synthigy__xsql` in Claude
-  Code).
-- `project_guide` explains how a project fits together (the `synthigy` CLI for
-  the engine, schema snapshot and code generation, Synthigy Studio for the
-  model and data), and a `setup_project` prompt has the agent write an
-  `AGENTS.md` for the project.
-
-The bot button glows green while an agent is working, and every agent load,
-save and switch shows a notification. On desktop, your name in the header
-signs that engine out and returns to the engine list.
-
-What changed for users:
-
-- Model: both switchers show a fixed-height list with a New dataset section,
-  rename and delete the open dataset, and mark the live version. A new
-  dataset gets its name and first version (0.1.0) in a dialog; names that
-  differ only by case, spaces or punctuation are refused. Drafts can be
-  deleted; deleting the live version is a Recall, which rolls the engine back
-  to the previous deployed version. Deployed versions can't be renamed.
-- Notifications sit at the bottom left, clear of the drawers.
-- Button labels can no longer be selected as text.
-
-Fixes:
-
-- A new dataset could not be saved or deployed when the dataset open before it
-  had a deployed version of the same name, and a save could then have written
-  over that other dataset's version.
-- A new dataset could take the name of the dataset that was open.
-- Desktop: an expired session is refreshed instead of failing, and popups no
-  longer fall back to a serif font.
-
-## 0.3.0
-
-Needs engine 0.4.1 or newer: Synthigy Studio signs in with the engine's
-Synthigy Studio client, which discovery now names `studio_client_id`.
-
-**Breaking.** The desktop app is now Synthigy Studio: `Synthigy Studio.app`,
-binary `synthigy-studio` (was `Synthigy.app`, `synthigy-desktop`), app id
-`com.synthigy.studio`. Re-add the MCP server with the new path (see the
-README). Saved engines and sign-ins do not carry over: add your engines again
-and sign in once.
-
-**License.** The web components (`tooling.js`) are now under the Business
-Source License 1.1 with the engine's Additional Use Grant (`dist/LICENSE`).
-0.2.0 and earlier stay MIT.
-
-**Files**, a tool between Data and Logs (⌘3 / ⌥3), for engines
-running the files module:
-
-- A folder tree, with files in no folder (attached to records) pinned under it.
-- Upload by button or drop, with progress; a name that is taken asks to
-  replace (a new version) or keep both. Download, rename, move, delete,
-  several files at once.
-- Versions with download and restore, and a preview for images, PDFs and text.
-- Folder settings: Public, Cache, and who may read, write and delete, with
-  users and groups picked from a list.
-- Go to path (⌘P), and live updates while someone else changes files.
-
-Synthigy Studio's MCP server now lets an agent work in the window you are
-looking at, as the account you signed in with:
-
-- Model: read and edit the model, list datasets, open a version, start a
-  dataset, and save drafts or a new version. An agent never deploys, recalls
-  or deletes, never saves over a deployed version or a draft it didn't
-  create, and refuses to load anything over unsaved changes on your canvas.
-- Data: write, check and run XSQL, show it to you in Data, read your
-  workspaces. How agent writes are handled is set per engine with the bot
-  button in the header: ask every time, ask once per session, allow, or off.
 - Engines: list the saved engines and switch to one that is already signed
   in. Signing in and out stays with you.
 - XSQL help is built in: the server hands agents a short XSQL reference when

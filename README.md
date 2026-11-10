@@ -17,22 +17,16 @@ irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 **Web components**, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
 
-or from npm:
-
-```sh
-npm install @synthigy/tooling
-```
-
 ## What's here
 
-- `dist/tooling.js` registers `<synthigy-tools>`: the modeler, the data console
-  and the log viewer as one element (Model · Data · Logs).
+- `dist/tooling.js` registers `<synthigy-tools>`: the modeler, the data console,
+  the file browser and the log viewer as one element (Model · Data · Files · Logs).
 - `dist/tooling.css` is optional: it loads the Inter and JetBrains Mono fonts
   from Google Fonts. Without it the elements use the system fonts and make no
   request to a third party. Every color token carries a fallback, so they
@@ -44,25 +38,22 @@ npm install @synthigy/tooling
 ## Web components
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.2.1/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
-
-The same files are served straight from this repository's tags:
-`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.1/dist/tooling.js`.
 
 Attributes:
 
 - `open`: shows the tools; the element clears it itself when the user closes them.
 - `endpoint`: the engine's base URL. Defaults to the page's origin.
-- `tool`: `model`, `data` or `logs`, the tool to open on. Without it the
+- `tool`: `model`, `data`, `files` or `logs`, the tool to open on. Without it the
   element opens on the last tool used.
 
 Properties: `xsql` (an array of `.xsql` file texts to open in Data), `onClose`.
 
-Method: `showTool("model" | "data" | "logs")` switches an open element, or sets
+Method: `showTool("model" | "data" | "files" | "logs")` switches an open element, or sets
 the tool the next open starts on. Event: `close`.
 
 ### Signing in
@@ -107,7 +98,7 @@ The installers above put a `synthigy` binary on your PATH (`~/.synthigy/bin`,
 override with `SYNTHIGY_INSTALL_DIR`). Pin a version:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.2.1
+curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.2.2
 ```
 
 Binaries and `sha256sums-portal.txt` are attached to each release here.
@@ -116,18 +107,19 @@ Binaries and `sha256sums-portal.txt` are attached to each release here.
 
 The same tools as a native app for macOS, Windows and Linux, with an MCP
 server an agent such as Claude Code works through (`synthigy-studio --mcp`):
-model, datasets and versions (drafts only, never deploy), XSQL, logs, and
+model, datasets and versions (drafts only, never deploy), XSQL, files, logs, and
 switching between engines you are signed in to. Agent data writes follow the
 per-engine setting under the bot button in the header.
 
-Connect Claude Code to the installed app (the app must be open, with an engine
-signed in):
+Connect Claude Code to the installed app (the app must be open). Start your
+agent in the project folder: Studio opens that folder's project and its engine
+for every call. The shell side of the loop is `synthigy guide`.
 
 ```
 # macOS
-claude mcp add synthigy -s user -- "/Applications/Synthigy Studio.app/Contents/MacOS/synthigy-studio" --mcp
+claude mcp add synthigy-studio -s user -- "/Applications/Synthigy Studio.app/Contents/MacOS/synthigy-studio" --mcp
 # Windows (PowerShell; MSI installs go to C:\Program Files\Synthigy Studio instead)
-claude mcp add synthigy -s user -- "$env:LOCALAPPDATA\Synthigy Studio\synthigy-studio.exe" --mcp
+claude mcp add synthigy-studio -s user -- "$env:LOCALAPPDATA\Synthigy Studio\synthigy-studio.exe" --mcp
 ```
 Each release carries the installers: `.dmg` (macOS, Intel and Apple Silicon),
 `.msi` and `-setup.exe` (Windows), `.deb`, `.rpm` and `.AppImage` (Linux),
