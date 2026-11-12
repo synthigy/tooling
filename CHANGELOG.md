@@ -1,5 +1,61 @@
 # Changelog
 
+## 0.3.0
+
+Needs engine 0.4.2 or newer, as 0.2.2 did.
+
+**Synthigy Studio updates itself.**
+
+- **How:** it checks at launch, every six hours (time asleep counts), and when you come back to
+  the window after an hour away. It downloads a new release in the background. Restart to update then appears on the engine list, and as an Update button in the
+  tools header.
+- **When it won't restart:** Restart to update waits while the canvas has unsaved changes, a deploy
+  or save runs, or an agent call runs.
+- **Minimum version:** a release can set one. Below it, Studio shows Update required until it
+  has updated. That screen installs even with unsaved canvas changes; they come back after the
+  restart.
+- **Signing:** updates are signed, and Studio installs only a release signed for its own
+  version.
+- **Linux:** the AppImage updates itself. A `.deb` or `.rpm` install says when a release is out,
+  and Download opens its page; install it by hand. A minimum version never forces it.
+- **This release** installs by hand, once.
+
+**Menus, links and one window.**
+
+- **Menus:** Studio has a native menu: About and its version, Check for Updates…, Open Project…
+  (⌘O), New Project…, the tools, Keyboard Shortcuts and the release notes.
+- **Links:** `synthigy://open?path=<folder>` opens a project and `synthigy://engine?url=<endpoint>`
+  an engine; `&tool=data` picks the tool. An engine you haven't added is only filled into the add
+  form.
+- **One window:** starting Studio again brings the open window forward instead of a second app,
+  and a folder given on the command line opens there.
+
+**Engines too old for Studio.** Studio checks an engine's version before opening it. An engine
+older than 0.4.2 shows "needs engine 0.4.2+" in the engine list. Opening it shows what to
+upgrade, instead of tools that fail. Agents get the same answer, and `engines` refuses to switch
+to it.
+
+**Local projects run side by side.**
+
+- **Portal port:** a project's portal takes any free port each time it starts
+  (`SYNTHIGY_PORTAL_PORT=0`); `synthigy portal` and Studio find it. `synthigy env init` writes it
+  for a new project; an existing project gets it on its next `synthigy up` when its `.env` names no
+  portal port. `~/.synthigy` and servers keep 7888.
+- **Engine port:** `synthigy up` refuses an engine port anything else listens on (another engine,
+  an ssh tunnel), and suggests a free one. Before, an engine could share `localhost:<port>` with a
+  tunnel on the other loopback address, and Studio could end up on the wrong engine.
+- **Use port N:** when a stopped project's engine port is taken, Studio offers to move the project to
+  a free port in one click instead of Start.
+- **Open project:** Studio refused a project that had an `xsql/schema.json` ("isn't in a Synthigy
+  project"), because the CLI misreported where it found the project. Fixed in both.
+- **Project list:** a project shows running only when its own engine answers. When another
+  project's engine holds its port, the row says so and offers no Start.
+- **Errors** in the project picker show under the card without moving it, and a failed start
+  names its cause (for example a port already in use) instead of "did not become ready".
+
+**Corrections to the 0.2.2 notes.** A user, group or role reference also filters by `xid`, not only
+by `display_name` or `name`. The window keeps running behind other windows on macOS 14 and newer.
+
 ## 0.2.2
 
 Needs engine 0.4.2 or newer: the modeler writes stamp attributes (model format

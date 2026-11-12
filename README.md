@@ -17,10 +17,16 @@ irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 **Web components**, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.0/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.0/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
+```
+
+or from npm:
+
+```sh
+npm install @synthigy/tooling
 ```
 
 ## What's here
@@ -38,11 +44,14 @@ irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 ## Web components
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.2.2/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.0/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.0/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
+
+The same files are served straight from this repository's tags:
+`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.3.0/dist/tooling.js`.
 
 Attributes:
 
@@ -98,7 +107,7 @@ The installers above put a `synthigy` binary on your PATH (`~/.synthigy/bin`,
 override with `SYNTHIGY_INSTALL_DIR`). Pin a version:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.2.2
+curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.3.0
 ```
 
 Binaries and `sha256sums-portal.txt` are attached to each release here.
@@ -124,6 +133,10 @@ claude mcp add synthigy-studio -s user -- "$env:LOCALAPPDATA\Synthigy Studio\syn
 Each release carries the installers: `.dmg` (macOS, Intel and Apple Silicon),
 `.msi` and `-setup.exe` (Windows), `.deb`, `.rpm` and `.AppImage` (Linux),
 with `sha256sums-studio.txt`.
+
+From 0.2.3 on, Studio updates itself: it checks at launch and every six hours,
+downloads in the background and offers Restart to update. The AppImage updates
+itself on Linux; `.deb` and `.rpm` installs update by hand.
 
 The installers are not signed yet. On macOS, open the app the first time with
 right-click → Open; on Windows, choose "More info" → "Run anyway" in
