@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.1
+
+Needs engine 0.4.2 or newer, as 0.3.0 did. The `synthigy` CLI is unchanged.
+
+**XSQL lint matches the engine on two rules**, in the Data tool and in Studio's `xsql_check`:
+
+- **Relation paths in an operation filter:** `sum(payments.amount, payments.invoice.xid is null)`
+  is now a lint error. An operation's filter reads attributes of the related entity only, and the
+  engine refuses the path when the query runs.
+- **Optional params under `or`:** an optional `?name?` that could empty only some sides of an `or`
+  is now a warning. The engine refuses such a run with `PARAM_OPTIONAL_IN_OR`.
+- **Same optional on every side:** `name like ?q? or email like ?q?` gets no warning. Engine 0.5.1
+  runs it without `q` and with no filter; older engines refuse it.
+
 ## 0.3.0
 
 Needs engine 0.4.2 or newer, as 0.2.2 did.
