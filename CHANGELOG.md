@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.2
+
+Needs engine 0.4.2 or newer, as 0.3.1 did. Update the `synthigy` CLI too (`synthigy upgrade`):
+Studio reads the new status from it.
+
+**A renamed project folder no longer hangs Studio.** Renaming a folder while its engine runs
+left that engine working from the old path: its data requests timed out and Studio waited with
+the window disabled.
+
+- **Studio:** the project row says the engine still runs for the old folder and turns Open off;
+  **Restart** stops that engine and starts it from the folder's new place.
+- **CLI:** `synthigy status` names the old folder and says to run `synthigy down`, then
+  `synthigy up`; `status --json` reports it as `moved_from`. macOS and Linux; Windows can't
+  tell yet.
+
+**Back to Studio after signing in.** The browser's "Signed in" page now opens Studio, so its
+window comes to the front instead of staying behind the browser. The browser asks the first
+time; tick "Always allow" and it won't ask again.
+
 ## 0.3.1
 
 Needs engine 0.4.2 or newer, as 0.3.0 did. The `synthigy` CLI is unchanged.

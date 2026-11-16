@@ -17,8 +17,8 @@ irm https://raw.githubusercontent.com/synthigy/tooling/main/install.ps1 | iex
 **Web components**, straight from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.1/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.1/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.2/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.2/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
@@ -44,14 +44,14 @@ npm install @synthigy/tooling
 ## Web components
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.1/dist/tooling.css">
-<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.1/dist/tooling.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.2/dist/tooling.css">
+<script src="https://cdn.jsdelivr.net/npm/@synthigy/tooling@0.3.2/dist/tooling.js"></script>
 
 <synthigy-tools endpoint="https://api.example.com" open></synthigy-tools>
 ```
 
 The same files are served straight from this repository's tags:
-`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.3.1/dist/tooling.js`.
+`https://cdn.jsdelivr.net/gh/synthigy/tooling@v0.3.2/dist/tooling.js`.
 
 Attributes:
 
@@ -107,7 +107,7 @@ The installers above put a `synthigy` binary on your PATH (`~/.synthigy/bin`,
 override with `SYNTHIGY_INSTALL_DIR`). Pin a version:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.3.1
+curl -fsSL https://raw.githubusercontent.com/synthigy/tooling/main/install.sh | sh -s -- v0.3.2
 ```
 
 Binaries and `sha256sums-portal.txt` are attached to each release here.
