@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.3
+
+Needs engine 0.4.2 or newer, as 0.3.2 did. The `synthigy` CLI is unchanged.
+
+**One "Always allow" for signing in.** After you sign in, the browser now goes back to Studio
+through `studio.synthigy.com`, so the "Open Synthigy Studio?" prompt names that site instead of
+a local address. Tick "Always allow" once and it holds for every engine. Offline, the sign-in
+page opens Studio itself, as in 0.3.2.
+
 ## 0.3.2
 
 Needs engine 0.4.2 or newer, as 0.3.1 did. Update the `synthigy` CLI too (`synthigy upgrade`):
