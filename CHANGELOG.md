@@ -1,5 +1,55 @@
 # Changelog
 
+## 0.3.4
+
+Needs engine 0.4.2 or newer, as 0.3.2 did; engine 0.5.3 adds served docs, write modes and error
+docs, which Studio and the CLI use when they're there. Update the `synthigy` CLI too
+(`synthigy upgrade`), and reconnect Studio's MCP server in your agent (`/mcp` in Claude Code) to
+get the new tools.
+
+**Agents get the rules from the engine.** Studio's MCP instructions start with the engine's
+agent brief, and `engine_docs` reads the documentation the open engine serves for its own
+version (Studio's own copy for older engines). An engine error carries a `doc` id that
+`engine_docs` opens; `synthigy docs [id]` does the same from the shell.
+
+**Agents can set up an app's accounts.** New MCP tools for OAuth clients (`create_client`,
+`rotate_client_secret`, `set_client_active`, `remove_client`), for roles, users and groups
+(`create_role`, `create_user`, `create_group`, `set_membership`, with their list and remove
+tools), and `upload_file` for a file in the project.
+
+- A new client's secret goes into the project's `.synthigy/.env` (`SYNTHIGY_ENDPOINT`,
+  `SYNTHIGY_CLIENT_ID`, `SYNTHIGY_CLIENT_SECRET`, the keys the app gets in production). The
+  agent gets the id, never the secret. Studio refuses a `.env` that holds another client or
+  that git doesn't ignore.
+- A test user's password is shown to you once and stored nowhere.
+- Creates follow the engine's agent-write setting; every remove asks you, whatever the setting.
+
+**Agents see what they may not write.** `get_model` and `xsql_check` mark File and Folder as
+link-only and File Link as read-only, so an agent links files by xid instead of writing them.
+The Data console flags the same writes while you type.
+
+**Clearer confirmations.** The confirm dialog has a fixed size, lists the details, highlights
+XSQL and data, and uses red only for removes.
+
+**CLI.**
+
+- In a folder that only connects to an engine, `status` shows the connection instead of
+  "DOWN", `doctor` checks the connection, and `up`/`down` refuse instead of acting on another
+  engine on this machine. `status --json` reports `engine_version`.
+- OAuth clients go through the normal data API: `iam add-client` (within your access, not root
+  only), `iam rotate-client`, `iam set-client --active`, and `iam remove-client` against a
+  connected engine.
+- `connect` asks before replacing the identity a folder holds (`--replace` when not at a
+  terminal), so signing in no longer silently drops an app's client secret.
+- Portal setup: file storage on local disk or S3 (with a Test, and moving files between
+  stores), supervised app jars, and the portal names its instance. Full list in the CLI's
+  CHANGELOG.
+
+**One "Always allow" for signing in.** After you sign in, the browser now goes back to Studio
+through `studio.synthigy.com`, so the "Open Synthigy Studio?" prompt names that site instead of
+a local address. Tick "Always allow" once and it holds for every engine. Offline, the sign-in
+page opens Studio itself, as in 0.3.2.
+
 ## 0.3.3
 
 Needs engine 0.4.2 or newer, as 0.3.2 did. The `synthigy` CLI is unchanged.
