@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.3.5
+
+Record locks need engine 0.5.6; everything else still works with engine 0.4.2 and newer. Update
+the `synthigy` CLI too (`synthigy upgrade`), and reconnect Studio's MCP server in your agent
+(`/mcp` in Claude Code) to get the new tool options.
+
+**Record locks in the modeler.** **Add lock** on an entity adds a Lock attribute (who holds a
+record) and a Lock expiry timestamp with its TTL in seconds. A second Lock on one entity is flagged
+before you deploy, since the engine refuses it.
+
+**The Data console knows `@claim` and `@release`.** Completion, help and lint: a claim needs a
+`limit`, refuses `distinct`, and is flagged on an entity without a Lock or with a limit above the
+engine's cap (`LOCK_LIMIT_TOO_LARGE`). `@release` takes xids or one record by unique key, like
+`@delete`. A lock guards only its record's own columns: delete, purge, slice and links ignore it,
+and the console no longer warns about them.
+
+**Agents can lock too.** Studio's `model_edit` adds a lock (`add_lock`, with `ttl`); `xsql_check`
+and `xsql_run` treat `@claim` and `@release` as writes, which follow the engine's agent-write
+setting.
+
+**The deploy drawer reads warnings as warnings.** Shared-entity overrides
+(`SHARED_ENTITY_OVERRIDE`, naming the other datasets a deploy changes), `SYSTEM_MARK` and
+`RLS_GUARD_BROKEN` show as warnings; only `SYSTEM_ENTITY_ALTERED` asks for a superuser override.
+
+**The CLI starts the engine faster.** `synthigy up` keeps a class-data archive per instance, so
+later boots skip most class loading. New defaults: `POSTGRES_POOL_SIZE` 50 and
+`SQLITE_SYNCHRONOUS` NORMAL. Offline, when a newer JRE can't be downloaded, the installed one is
+used instead of failing.
+
 ## 0.3.4
 
 Needs engine 0.4.2 or newer, as 0.3.2 did; engine 0.5.3 adds served docs, write modes and error
