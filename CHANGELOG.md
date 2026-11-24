@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.3.7
+
+Apps need engine 0.6.0 with the Apps module on. Everything else still works with
+engine 0.4.2 and newer (0.5.6 for record locks): on an older engine the Apps tab is locked and the
+other tools are untouched. Update the `synthigy` CLI too (`synthigy upgrade`), and reconnect
+Studio's MCP server in your agent (`/mcp` in Claude Code): the IAM tools were renamed.
+
+**Apps in Studio.** A fifth tool, **Apps** (⌥4; Logs moves to ⌥5), lists the engine's apps with
+their packages. Deploy an image archive, activate, stop or delete a package; set an app's memory,
+CPU and volume limits, its deployers, its OAuth client's state and secret. Volumes can be added,
+resized and deleted. Variables can be added, edited and deleted; a sensitive value never reads
+back. Hostnames are shown. The tab locks ("This engine has no Apps module") when the engine
+doesn't list `apps` in `/.well-known/synthigy`.
+
+**Apps from the CLI.** `synthigy app pack` runs your `buildCommand` and checks the image archive
+it made (docker/podman save, ko, Jib, .NET) into `dist/`. `synthigy app deploy` packs, uploads,
+makes the package the running one and waits until it runs or fails; deploying an older `.tar`
+rolls back. `synthigy app logs <client-id>` reads an app's output, usage and events.
+`synthigy app run | stop | ls` runs an archive on this machine without an engine.
+
+**Hosting apps on Linux.** `sudo synthigy service install --apps` sets up rootless Podman for
+apps (own user, egress filter, a self-test, an XFS volume pool that grows online).
+`sudo synthigy service install --domain <name>` makes the machine a server on 443/80 with your
+own certificate (`--cert`/`--key`) or ACME (Let's Encrypt by default). The portal restarts
+crashed apps, carries a rotated secret into a restart, issues certificates before the first
+visitor and counts requests per hostname. Running apps needs systemd, Podman 4.9+, passt and
+nftables; macOS and Windows can pack and deploy, not host.
+
+**A proxy in front of the engine.** New instances (`synthigy env init`) start with
+`SYNTHIGY_PROXY_MODE=http`: the portal answers the public port and routes `<app>.localhost` and
+app hostnames to apps, everything else to the engine. `SYNTHIGY_PROXY_MODE=off` keeps the old
+behaviour; existing `.env` files are not changed. The proxy's settings are in ENV.md. `synthigy status` shows the proxy row and
+`synthigy doctor` an `apps` section.
+
+**Portal page.** A Certificates panel (per name: state, issuer, expiry, Retry now) switches
+between ACME and your own pair without a restart. Saving Files settings restarts only the Files
+module, and the Engine panel restarts single modules.
+
+**Agent tools.** `iam_list` and `iam_edit` replace the 16 IAM tools and `set_role_access`
+(now `iam_edit`'s `grant`); `iam_edit` asks once per batch. New `deploy_version` (previews first,
+refuses errors) and `remove_version`. Every agent change goes through one policy: under `allow`,
+XSQL `@delete`/`@purge` still ask and removes no longer do; nothing saves under read-only; and
+`get_app_state` reports the policy. `switch_tool` opens Apps. `get_model` and `get_entity` mark system entities and
+relations; `model_edit` warns before an edit drops a unique group.
+
+**Fixes.** Role grants no longer save without asking under ask or session, drafts no longer save under Off, and a
+`model_edit` on an entity no longer empties its unique group.
+
 ## 0.3.6
 
 A fix release; same requirements as 0.3.5.
