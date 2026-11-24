@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.7
+## 0.6.0
 
 Apps need engine 0.6.0 with the Apps module on. Everything else still works with
 engine 0.4.2 and newer (0.5.6 for record locks): on an older engine the Apps tab is locked and the
@@ -47,6 +47,11 @@ relations; `model_edit` warns before an edit drops a unique group.
 
 **Fixes.** Role grants no longer save without asking under ask or session, drafts no longer save under Off, and a
 `model_edit` on an entity no longer empties its unique group.
+
+## 0.3.7
+
+The same release as 0.6.0, published to npm and tagged under 0.3.7 first; no Studio or CLI build was
+made for it. Use 0.6.0.
 
 ## 0.3.6
 
