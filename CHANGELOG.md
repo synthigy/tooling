@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.6
+
+A fix release; same requirements as 0.3.5.
+
+**Opening a deployed model no longer pegs the CPU.** The modeler kept re-measuring entities on a
+deployed (read-only) model and rewrote the whole model to browser storage about 190 times a
+second. Large models in Studio and the web tools are idle again once drawn.
+
 ## 0.3.5
 
 Record locks need engine 0.5.6; everything else still works with engine 0.4.2 and newer. Update
