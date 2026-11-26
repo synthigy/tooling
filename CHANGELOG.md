@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.1
+
+Works with engine 0.6.1; update the `synthigy` CLI too (`synthigy upgrade`).
+
+**Tenants.** A whole Synthigy can run as an App of another one and host Apps of its own. An
+App whose Sandbox Type is `relaxed` gets what it needs to run containers inside its own limits;
+`sudo synthigy service install --apps` adds the sub-ids it needs and moves running Apps over
+with one restart. A tenant's Apps answer on `<app>.<tenant>.<domain>`, and the portal in front
+gets each of them its own Let's Encrypt certificate, after asking the tenant that it really
+runs that name, at most 20 new names a week per tenant. The Certificates panel lists each
+tenant's names. A tenant renamed by the engine restarts under its new name.
+
+**System tab.** Logs is now System: the machine's and every App's CPU, memory and requests over
+the last week, kept by the portal. An App's page in Apps opens with the same usage for it
+(1 h, 24 h, 7 d). `synthigy app logs` reads output and events; usage moved to the System tab.
+
+**Apps.** In Studio with a project open, Deploy packs the project's `apps/<name>.app.json`
+first. Settings stay visible beside the packages. New agent tools: `app_status` (an engine's
+Apps, packages, hostnames and limits) and `app_deploy` (pack, upload and start an App as the
+signed-in human). `synthigy app deploy` links an archive already on the engine instead of
+uploading it again. `synthigy app stop` refuses an App the engine runs; stop it by deactivating
+its package.
+
+**Engine 0.6.1 values.** The tools read enum values as the engine now sends them.
+
 ## 0.6.0
 
 Apps need engine 0.6.0 with the Apps module on. Everything else still works with
